@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <script>
+
+
+        itheima({
+            method: 'post',
+            url: 'http://www.liulongbin.top:3006/api/addbook',
+            data: {
+                bookname: 'ffff',
+                author: '撞鬼',
+                publisher: '鬼哈哈'
+            },
+            success: function (res) {
+                console.log(res);
+            }
+        })
+
+        //将对象数据转换成JSON格式
+        function getJson(data) {
+            let arr = [];
+            for (let k in data) {
+                arr.push(k + "=" + data[k]);
+            }
+            return arr.join('&')
+        }
+        //定义ajax请求函数
+        function itheima(options) {
+            var xhr = new XMLHttpRequest();
+            var qs = getJson(options.data);
+            var methods = options.method ? options.method.toUpperCase() : 'GET';
+            if (methods == 'GET') {
+                xhr.open(methods, options.url + '?' + qs);
+                xhr.send();
+            } else if (methods == 'POST') {
+                xhr.open('POST', options.url);
+                xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+                xhr.send(qs);
+            }
+
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState == 4 && xhr.status == 200) {
+                    var result = JSON.parse(xhr.responseText);
+                    options.success(result);
+                }
+            }
+        }
+    </script>
+</body>
+
+</html>

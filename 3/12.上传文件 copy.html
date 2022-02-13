@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+  <link rel="stylesheet" href="./lib/bootstrap.css">
+</head>
+
+<body>
+  <!-- 上传文件按钮 -->
+  <input type="file" id="fileUp">
+  <button type="submit" id="btnUp">点击上传</button><br>
+  <div class="progress" style="width: 500px; display: none;">
+    <div class="progress-bar progress-bar-striped active" style="width: 0%" id="progress-bar">
+    </div>
+  </div>
+  <img src="" alt="" id="imgs" style="width: 500px;">
+
+
+
+  <script>
+    // 获取上传文件按钮
+    var btnUp = document.querySelector('#btnUp');
+
+    // 监听点击事件
+    btnUp.addEventListener('click', function () {
+      // 获取上传的文件,是一个数组
+      var files = document.querySelector('#fileUp').files;
+      //获取进度条
+      let xrjindu = document.querySelector('#progress-bar');
+      //判断是否选择了文件
+      if (files.length <= 0) {
+        return alert('请选择文件！');
+      } else {
+        //显示进度条框
+        xrjindu.parentNode.style.display = 'block';
+        // 向formdata中添加选择的文件
+        var fd = new FormData();
+        fd.append('avatar', files[0]);
+        // 上传文件
+        var xhr = new XMLHttpRequest();
+        // 监听文件上传进度
+        // xhr.upload是一个对象
+        xhr.upload.onprogress = function (e) {
+          if (e.lengthComputable) {
+            //计算文件上传进度
+            let jindu = Math.ceil((e.loaded / e.total) * 100);
+            console.log(jindu);
+            //渲染文件上传进度
+            xrjindu.style = "width:" + jindu + "%";
+            xrjindu.innerHTML = jindu + "%";
+          }
+        }
+        //监听文件上传成功事件
+        xhr.upload.onload = function () {
+          xrjindu.className = "";
+          xrjindu.classList.add("progress-bar", "progress-bar-success");
+
+        }
+
+        xhr.open('POST', 'http://www.liulongbin.top:3006/api/upload/avatar');
+        xhr.send(fd);
+        //监听请求事件
+        xhr.onreadystatechange = function () {
+          if (xhr.readyState == 4 && xhr.status == 200) {
+            console.log(xhr.responseText);
+            var data = JSON.parse(xhr.responseText);
+            if (data.status == 200) {
+              console.log('文件上传成功！');
+              document.querySelector('#imgs').src = 'http://www.liulongbin.top:3006' + data.url;
+            } else {
+              console.log('文件上传失败！');
+            }
+          }
+        }
+      }
+    })
+
+  </script>
+</body>
+
+</html>

@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+  <script src="./lib/jquery.js"></script>
+</head>
+
+<body>
+  <button id="btnPOST">发起POST请求</button>
+
+  <script>
+    $(function () {
+      $('#btnPOST').on('click', function () {
+        $.ajax({
+          type: 'POST',
+          url: 'http://www.liulongbin.top:3006/api/addbook',
+          data: {
+            id: 999,
+            bookname: '组装电池爆炸',
+            author: '已亡人',
+            publisher: '阎王殿图书馆'
+          },
+          success: function () {
+            $.ajax({
+              type: 'GET',
+              url: 'http://www.liulongbin.top:3006/api/getbooks',
+              success: function (res) {
+                console.log(res);
+              }
+            })
+          }
+        })
+      })
+    })
+  </script>
+</body>
+
+</html>

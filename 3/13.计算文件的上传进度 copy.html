@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+  <link rel="stylesheet" href="./lib/bootstrap.css" />
+  <script src="./lib/jquery.js"></script>
+</head>
+
+<body>
+  <!-- 1. 文件选择框 -->
+  <input type="file" id="file1" />
+  <!-- 2. 上传文件的按钮 -->
+  <button id="btnUpload">上传文件</button>
+
+  <!-- bootstrap 中的进度条 -->
+  <div class="progress" style="width: 500px; margin: 15px 10px;">
+    <div class="progress-bar progress-bar-striped active" style="width: 0%" id="percent">
+      0%
+    </div>
+  </div>
+
+  <br />
+  <!-- 3. img 标签，来显示上传成功以后的图片 -->˜
+  <img src="" alt="" id="img" width="800" />
+
+  <script>
+    var btnUpload = document.querySelector('#btnUpload');
+    btnUpload.addEventListener('click', function () {
+      var files = document.querySelector('#file1').files;
+      var jindu = document.querySelector('#percent');
+      if (files.length <= 0) {
+        return alert('未选择文件！');
+      }
+      var fd = new FormData();
+      fd.append("avatar", files[0]);
+      var xhr = new XMLHttpRequest();
+      xhr.upload.onprogress = function (e) {
+        if (e.lengthComputable) {
+          let x = Math.floor(e.loaded / e.total * 100);
+          console.log(x);
+          jindu.style = 'width:' + x + '%';
+          jindu.innerHTML = x + '%'
+        }
+      }
+      xhr.upload.onload = function () {
+        jindu.className = '';
+        jindu.classList.add('progress-bar', 'progress-bar-success');
+      }
+      xhr.open('POST', 'http://www.liulongbin.top:3006/api/upload/avatar');
+      xhr.send(fd);
+      xhr.onreadystatechange = function () {
+        if (xhr.readyState == 4 && xhr.status == 200) {
+          console.log('请求成功');
+          var data = JSON.parse(xhr.responseText);
+          if (data.status !== 200) {
+            return console.log(data.message);
+          }
+          document.querySelector('#img').src = 'http://www.liulongbin.top:3006' + data.url;
+        }
+      }
+    })
+  </script>
+</body>
+
+</html>
